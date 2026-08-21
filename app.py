@@ -73,3 +73,35 @@ documentos = carregar_documentos()
 print(
     f"✅ Documentos carregados: {len(documentos)} páginas com texto"
 )
+# ============================================================
+# CHUNKING DOS DOCUMENTOS
+# ============================================================
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200,
+    length_function=len
+)
+
+chunks = []
+
+for documento in documentos:
+
+    partes = text_splitter.split_text(
+        documento["texto"]
+    )
+
+    for numero_chunk, texto_chunk in enumerate(
+        partes,
+        start=1
+    ):
+
+        chunks.append({
+            "fonte": documento["fonte"],
+            "pagina": documento["pagina"],
+            "chunk": numero_chunk,
+            "texto": texto_chunk
+        })
+
+
+print(f"✅ Chunks criados: {len(chunks)}")
