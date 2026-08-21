@@ -200,3 +200,19 @@ def buscar_contexto(pergunta, quantidade=1):
 
 
 print("✅ Função de busca semântica criada")
+# ============================================================
+# CONEXÃO COM O GEMINI
+# ============================================================
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    raise ValueError(
+        "A variável de ambiente GEMINI_API_KEY não foi configurada."
+    )
+
+client_gemini = genai.Client(
+    api_key=GEMINI_API_KEY
+)
+
+print("✅ Cliente Gemini configurado com sucesso")
