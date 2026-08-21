@@ -32,7 +32,7 @@ MODELO_GEMINI = os.environ.get(
     "gemini-3.5-flash-lite"
 )
 
-NOME_COLLECTION = "medflow_protocolos"
+NOME_COLLECTION = "medflow_protocolos_prod_v2"
 
 print("🚀 Iniciando MedFlow AI...")
 
