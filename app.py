@@ -167,4 +167,36 @@ if collection.count() == 0:
 
 print(
     f"✅ Banco vetorial pronto: {collection.count()} chunks"
-)
+)# ============================================================
+# BUSCA SEMÂNTICA
+# ============================================================
+
+def buscar_contexto(pergunta, quantidade=1):
+
+    embedding_pergunta = modelo_embeddings.encode(
+        [pergunta],
+        normalize_embeddings=True
+    )
+
+    resultado = collection.query(
+        query_embeddings=embedding_pergunta.tolist(),
+        n_results=quantidade,
+        include=["documents", "metadatas", "distances"]
+    )
+
+    contextos = []
+
+    for i in range(len(resultado["documents"][0])):
+
+        contextos.append({
+            "texto": resultado["documents"][0][i],
+            "fonte": resultado["metadatas"][0][i]["fonte"],
+            "pagina": resultado["metadatas"][0][i]["pagina"],
+            "chunk": resultado["metadatas"][0][i]["chunk"],
+            "similaridade": 1 - resultado["distances"][0][i]
+        })
+
+    return contextos
+
+
+print("✅ Função de busca semântica criada")
