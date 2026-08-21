@@ -276,3 +276,192 @@ RESPOSTA:
 
 
 print("✅ Função de resposta do MedFlow AI criada")
+# ============================================================
+# INTERFACE GRADIO
+# ============================================================
+
+css_medflow = """
+.gradio-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background:
+        radial-gradient(circle at top right, rgba(0, 194, 209, 0.10), transparent 35%),
+        linear-gradient(180deg, #f7fbfd 0%, #eef7fa 100%);
+}
+
+#medflow-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.hero-medflow {
+    background: linear-gradient(135deg, #002f57 0%, #005f8f 55%, #00a7b5 100%);
+    color: white;
+    padding: 45px;
+    border-radius: 0 0 28px 28px;
+    margin-bottom: 25px;
+}
+
+.hero-medflow h1 {
+    color: white;
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.info-card {
+    background: white;
+    border: 1px solid #dcecf2;
+    border-radius: 18px;
+    padding: 20px;
+    min-height: 110px;
+}
+
+#consulta-card {
+    background: white;
+    border-radius: 22px;
+    padding: 25px !important;
+    margin-top: 20px;
+    border: 1px solid #d8eaf0;
+}
+
+.disclaimer {
+    margin-top: 24px;
+    background: #fffdf5;
+    border-left: 5px solid #e4b534;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.footer-medflow {
+    margin-top: 30px;
+    text-align: center;
+    color: #718792;
+    font-size: 12px;
+}
+"""
+
+with gr.Blocks(title="MedFlow AI") as app:
+
+    gr.HTML("""
+        <div class="hero-medflow">
+            <h1>MedFlow AI</h1>
+
+            <p>
+                Assistente inteligente para consulta de protocolos
+                e documentos clínicos utilizando tecnologia RAG.
+            </p>
+
+            <p>
+                <strong>
+                Conectando conhecimento, melhorando decisões,
+                cuidando de vidas.
+                </strong>
+            </p>
+        </div>
+    """)
+
+    with gr.Column(elem_id="medflow-main"):
+
+        with gr.Row():
+
+            gr.HTML("""
+                <div class="info-card">
+                    <h3>📚 Base documental</h3>
+                    <p>
+                        Consulta informações diretamente dos
+                        documentos disponíveis.
+                    </p>
+                </div>
+            """)
+
+            gr.HTML("""
+                <div class="info-card">
+                    <h3>🔎 Busca semântica</h3>
+                    <p>
+                        Localiza o trecho mais relevante
+                        para cada pergunta.
+                    </p>
+                </div>
+            """)
+
+            gr.HTML("""
+                <div class="info-card">
+                    <h3>🧠 Tecnologia RAG</h3>
+                    <p>
+                        Respostas fundamentadas no contexto
+                        recuperado da base documental.
+                    </p>
+                </div>
+            """)
+
+        with gr.Column(elem_id="consulta-card"):
+
+            gr.Markdown("## Consulte o MedFlow AI")
+
+            pergunta = gr.Textbox(
+                label="Pergunta",
+                placeholder="Ex.: O que fazer se o paciente não cumpriu o jejum?",
+                lines=3
+            )
+
+            with gr.Row():
+
+                botao = gr.Button(
+                    "Perguntar ao MedFlow AI",
+                    variant="primary"
+                )
+
+                limpar = gr.Button(
+                    "Limpar"
+                )
+
+            resposta = gr.Markdown(
+                value="*A resposta aparecerá aqui.*"
+            )
+
+            gr.Examples(
+                examples=[
+                    ["O que fazer se o paciente não cumpriu o jejum?"],
+                    ["O que fazer quando o paciente relata alergia?"],
+                    ["Como proceder se houver divergência de lateralidade?"],
+                    ["O que fazer quando um termo obrigatório está pendente?"],
+                    ["O que fazer se o sistema apresentar dados de outro paciente?"]
+                ],
+                inputs=pergunta
+            )
+
+        gr.HTML("""
+            <div class="disclaimer">
+                <strong>⚠️ Uso educacional:</strong>
+                O MedFlow AI é um projeto acadêmico baseado em RAG.
+                Não substitui avaliação profissional, prescrição,
+                decisão clínica ou protocolos institucionais.
+            </div>
+        """)
+
+        gr.HTML("""
+            <div class="footer-medflow">
+                <strong>MedFlow AI</strong><br>
+                RAG • Inteligência Artificial • Saúde
+            </div>
+        """)
+
+    botao.click(
+        fn=responder_medflow,
+        inputs=pergunta,
+        outputs=resposta
+    )
+
+    pergunta.submit(
+        fn=responder_medflow,
+        inputs=pergunta,
+        outputs=resposta
+    )
+
+    limpar.click(
+        fn=lambda: ("", "*A resposta aparecerá aqui.*"),
+        inputs=[],
+        outputs=[pergunta, resposta]
+    )
