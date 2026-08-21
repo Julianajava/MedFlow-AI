@@ -1,0 +1,29 @@
+# Variáveis de ambiente e chaves
+.env
+.env.*
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# Arquivos temporários
+*.tmp
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Banco vetorial local
+chroma/
+chroma_db/
