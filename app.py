@@ -105,3 +105,66 @@ for documento in documentos:
 
 
 print(f"✅ Chunks criados: {len(chunks)}")
+# ============================================================
+# EMBEDDINGS E BANCO VETORIAL
+# ============================================================
+
+modelo_embeddings = SentenceTransformer(
+    MODELO_EMBEDDINGS
+)
+
+textos_chunks = [
+    item["texto"]
+    for item in chunks
+]
+
+embeddings = modelo_embeddings.encode(
+    textos_chunks,
+    normalize_embeddings=True
+)
+
+client_chroma = chromadb.Client()
+
+collection = client_chroma.get_or_create_collection(
+    name="medflow_protocolos",
+    metadata={"hnsw:space": "cosine"}
+)
+
+ids = []
+documentos_chroma = []
+metadados = []
+vetores = []
+
+for i, item in enumerate(chunks):
+
+    ids.append(
+        f"chunk_{i}"
+    )
+
+    documentos_chroma.append(
+        item["texto"]
+    )
+
+    metadados.append({
+        "fonte": item["fonte"],
+        "pagina": item["pagina"],
+        "chunk": item["chunk"]
+    })
+
+    vetores.append(
+        embeddings[i].tolist()
+    )
+
+# Só adiciona se a coleção estiver vazia
+if collection.count() == 0:
+
+    collection.add(
+        ids=ids,
+        documents=documentos_chroma,
+        metadatas=metadados,
+        embeddings=vetores
+    )
+
+print(
+    f"✅ Banco vetorial pronto: {collection.count()} chunks"
+)
