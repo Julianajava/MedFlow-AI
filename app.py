@@ -216,3 +216,63 @@ client_gemini = genai.Client(
 )
 
 print("✅ Cliente Gemini configurado com sucesso")
+# ============================================================
+# GERAÇÃO DA RESPOSTA
+# ============================================================
+
+def responder_medflow(pergunta):
+
+    if not pergunta or not pergunta.strip():
+        return "Digite uma pergunta para consultar a base de conhecimento."
+
+    # Busca o trecho mais relevante
+    resultados = buscar_contexto(
+        pergunta,
+        quantidade=1
+    )
+
+    melhor_resultado = resultados[0]
+
+    contexto = f"""
+Fonte: {melhor_resultado['fonte']}
+Página: {melhor_resultado['pagina']}
+
+{melhor_resultado['texto']}
+"""
+
+    prompt = f"""
+Você é o MedFlow AI, um assistente inteligente para consulta
+de protocolos e documentos clínicos.
+
+Responda à pergunta utilizando SOMENTE o contexto fornecido.
+
+Regras:
+- Não invente informações.
+- Não utilize conhecimento externo ao contexto.
+- Seja claro, objetivo e profissional.
+- Não faça diagnóstico ou prescrição.
+- Se a resposta não estiver disponível no contexto, responda:
+"Não encontrei essa informação na base de conhecimento."
+- Informe a fonte utilizada ao final.
+
+CONTEXTO:
+{contexto}
+
+PERGUNTA:
+{pergunta}
+
+RESPOSTA:
+"""
+
+    resposta = client_gemini.models.generate_content(
+        model=MODELO_GEMINI,
+        contents=prompt
+    )
+
+    if not resposta.text:
+        return "Não foi possível gerar uma resposta."
+
+    return resposta.text
+
+
+print("✅ Função de resposta do MedFlow AI criada")
